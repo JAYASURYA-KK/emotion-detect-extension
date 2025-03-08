@@ -1,0 +1,27 @@
+{
+  "manifest_version": 3,
+  "name": "Meet Emotion Analyzer",
+  "version": "1.0",
+  "description": "Analyzes emotions and tracks camera status in Google Meet",
+  "permissions": ["scripting", "tabs", "storage"],
+  "host_permissions": ["https://meet.google.com/*"],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": ["https://meet.google.com/*"],
+      "js": ["face-api.min.js", "content.js"],
+      "css": ["content.css"]
+    }
+  ],
+  "action": {
+    "default_popup": "popup/popup.html"
+  },
+  "web_accessible_resources": [
+    {
+      "resources": ["models/*"],
+      "matches": ["https://meet.google.com/*"]
+    }
+  ]
+}

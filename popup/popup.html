@@ -1,0 +1,263 @@
+<!--<!DOCTYPE html>
+<html>
+  <head>
+    <title>Meet Emotion Analyzer</title>
+    <style>
+      body {
+        width: 300px;
+        padding: 15px;
+        font-family: Arial, sans-serif;
+      }
+      .stats-container {
+        margin-top: 10px;
+      }
+      .stat-item {
+        margin: 5px 0;
+        padding: 8px;
+        background: #f5f5f5;
+        border-radius: 4px;
+        display: flex;
+        justify-content: space-between;
+      }
+      h3 {
+        margin: 0 0 15px 0;
+        color: #1a73e8;
+      }
+      .cameras-off-list {
+        margin-top: 15px;
+        border-top: 1px solid #ddd;
+        padding-top: 10px;
+      }
+      .cameras-off-item {
+        padding: 8px;
+        margin: 5px 0;
+        background: #f8f9fa;
+        border-radius: 4px;
+      }
+      .participant-email {
+        color: #666;
+        font-size: 12px;
+        margin-top: 2px;
+      }
+    </style>
+  </head>
+  <body>
+    <h3>Meeting Statistics</h3>
+    <div class="stats-container">
+      <div id="participantStats"></div>
+      <div id="emotionStats"></div>
+      <div id="camerasOffList" class="cameras-off-list"></div>
+    </div>
+    <script src="popup.js"></script>
+  </body>
+</html>
+-->
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Meet Emotion Analyzer</title>
+    <style>
+      body {
+        width: 320px;
+        padding: 15px;
+        font-family: "Google Sans", sans-serif;
+        color: #3c4043;
+      }
+
+      .header {
+        text-align: center;
+        margin-bottom: 20px;
+      }
+
+      .header-title {
+        font-size: 18px;
+        font-weight: 500;
+        color: #1a73e8;
+        margin: 0;
+      }
+
+      .header-subtitle {
+        font-size: 12px;
+        color: #5f6368;
+        margin-top: 5px;
+      }
+
+      .status-message {
+        padding: 12px;
+        text-align: center;
+        color: #5f6368;
+        background: #f8f9fa;
+        border-radius: 8px;
+        margin-bottom: 15px;
+      }
+
+      .section {
+        background: #f8f9fa;
+        border-radius: 12px;
+        padding: 15px;
+        margin-bottom: 15px;
+      }
+
+      .section-title {
+        font-size: 14px;
+        font-weight: 500;
+        color: #1a73e8;
+        margin-bottom: 10px;
+      }
+
+      .stat-item {
+        display: flex;
+        justify-content: space-between;
+        padding: 6px 0;
+        font-size: 13px;
+      }
+
+      .stat-item:not(:last-child) {
+        border-bottom: 1px solid #e8eaed;
+      }
+
+      .stat-label {
+        color: #3c4043;
+      }
+
+      .stat-value {
+        font-weight: 500;
+      }
+
+      /* Stylish button */
+      .btn {
+        --color: #00a97f;
+        --color2: rgb(10, 25, 30);
+        padding: 0.8em 1.75em;
+        background-color: transparent;
+        border-radius: 6px;
+        border: 0.3px solid var(--color);
+        transition: 0.5s;
+        position: relative;
+        overflow: hidden;
+        cursor: pointer;
+        z-index: 1;
+        font-weight: 500;
+        font-size: 14px;
+        font-family: "Roboto", "Segoe UI", sans-serif;
+        text-transform: uppercase;
+        color: var(--color);
+        width: 100%;
+        margin-bottom: 15px;
+      }
+
+      .btn::after,
+      .btn::before {
+        content: "";
+        display: block;
+        height: 100%;
+        width: 100%;
+        transform: skew(90deg) translate(-50%, -50%);
+        position: absolute;
+        inset: 50%;
+        left: 25%;
+        z-index: -1;
+        transition: 0.5s ease-out;
+        background-color: var(--color);
+      }
+
+      .btn::before {
+        top: -50%;
+        left: -25%;
+        transform: skew(90deg) rotate(180deg) translate(-50%, -50%);
+      }
+
+      .btn:hover::before {
+        transform: skew(45deg) rotate(180deg) translate(-50%, -50%);
+      }
+
+      .btn:hover::after {
+        transform: skew(45deg) translate(-50%, -50%);
+      }
+
+      .btn:hover {
+        color: var(--color2);
+      }
+
+      .btn:active {
+        filter: brightness(0.8);
+        transform: scale(0.98);
+      }
+
+      .emotion-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 8px;
+        margin-top: 10px;
+      }
+
+      .emotion-item {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        background: #ffffff;
+        border-radius: 8px;
+        padding: 8px 4px;
+        text-align: center;
+        transition: all 0.2s;
+      }
+
+      .emotion-item:hover {
+        background: rgba(26, 115, 232, 0.1);
+        transform: translateY(-2px);
+      }
+
+      .emotion-emoji {
+        font-size: 24px;
+        margin-bottom: 4px;
+      }
+
+      .emotion-count {
+        font-weight: 600;
+        color: #1a73e8;
+      }
+
+      .emotion-label {
+        font-size: 10px;
+        color: #5f6368;
+        text-transform: capitalize;
+        margin-top: 2px;
+      }
+
+      .cameras-off-list {
+        max-height: 200px;
+        overflow-y: auto;
+        margin-top: 10px;
+      }
+
+      .cameras-off-item {
+        background: #ffffff;
+        border-radius: 8px;
+        padding: 10px;
+        margin: 8px 0;
+      }
+
+      .participant-name {
+        font-weight: 500;
+        margin-bottom: 2px;
+      }
+
+      .participant-email {
+        font-size: 12px;
+        color: #5f6368;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="header">
+      <h1 class="header-title">Meet Emotion Analyzer</h1>
+      <p class="header-subtitle">Real-time emotion tracking for Google Meet</p>
+    </div>
+
+    <div id="content">
+      <button id="refreshButton" class="btn">Refresh Stats</button>
+      <div id="statsContent"></div>
+    </div>
+    <script src="popup.js"></script>
+  </body>
+</html>
